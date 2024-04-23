@@ -128,19 +128,23 @@
             2% {
                 transform: rotateX(0deg) skewX(0deg);
             }
-            .video-container {
-    border: 2px solid violet;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
+        }
 
-.video-container video {
-    width: 100%;
-    display: block;
-}
+        .video-container {
+            border: 2px solid violet;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
 
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
 
+        .password-input {
+            display: block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -170,9 +174,9 @@
             const currentMedia = document.querySelectorAll('audio, video')[currentIndex];
             if (nextIndex < currentMedia.parentNode.parentNode.children.length) {
                 const nextMedia = document.querySelectorAll('audio, video')[nextIndex];
-                nextMedia.parentNode.addEventListener('click', function() {
-                    nextMedia.play();
-                });
+                nextMedia.parentNode.classList.add('open'); // Open the next folder if not already open
+                nextMedia.play();
+                currentMedia.removeEventListener('ended', playNext); // Remove the event listener to prevent multiple executions
             }
         }
 
@@ -189,7 +193,7 @@
                 { title: "VVS - WALWAL ft. Raf Davis, Renzy, Nik Makino, & M$TRYO (Official Music Video)", artist: "VVS", src: "VVS - WALWAL ft. Raf Davis, Renzy, Nik Makino, & M$TRYO (Official Music Video).mp3" },
                 { title: "ANG BUHAY KO - Aegis (Lyric Video) OPM", artist: "Aegis", src: "ANG BUHAY KO - Aegis (Lyric Video) OPM.mp3" },
             ] },
-            { name: "Videos", music: [
+            { name: "Videos", password: "joshua", music: [
                 { title: "cute girl🤗", src: "video/vid1.mp4" },
                 { title: "beautiful girl🫢", src: "video/vid2.mp4" },
                 { title: "HOT girl 🥵🥵", src: "video/vid3.mp4" },
@@ -229,6 +233,16 @@
                     folderElement.classList.remove("open");
                     musicList.innerHTML = "";
                 } else {
+                    if (folder.password && folder.name === "Videos") {
+                        const password = prompt("Enter password:");
+                        if (password === null) {
+                            return; // Cancel button pressed
+                        }
+                        if (password !== folder.password) {
+                            alert("Incorrect password.");
+                            return;
+                        }
+                    }
                     closeAllFolders();
                     folderElement.classList.add("open");
                     displayMusic(folder);
